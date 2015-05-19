@@ -12,8 +12,9 @@ module ActiveAdmin::Seo::FormBuilderExtension
 
     object.build_seo_meta unless object.seo_meta.present?
 
-    content = semantic_fields_for :seo_meta do |form|
-      form.inputs I18n.t('active_admin.seo_meta.name') do
+    html = "".html_safe
+    html << semantic_fields_for(:seo_meta) do |form|
+      form.inputs(I18n.t('active_admin.seo_meta.name')) do
         if options[:slug]
           form.input :slug, as: :slug, input_html: { url_prefix: options[:slug_url_prefix] }
         end
@@ -30,11 +31,9 @@ module ActiveAdmin::Seo::FormBuilderExtension
           form.input :og_url   if options[:open_graph_metas][:url]
           form.input :og_image, :as => :dragonfly, :input_html => { :components => [:preview, :upload, :url, :remove ] } if options[:open_graph_metas][:image]
         end
-        form.form_buffers.last
       end
-      form.form_buffers.last
     end
-    form_buffers.last << content
+    template.concat(html)
   end
 
   private
